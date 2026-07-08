@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.theeventplannerexpo.com)",
+      "PowerShell(npm run lint --prefix web)"
+    ]
+  }
+}

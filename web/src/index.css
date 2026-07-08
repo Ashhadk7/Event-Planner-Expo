@@ -1,0 +1,370 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   THE EVENT PLANNER EXPO — Speaker Portal
+   Light, editorial, premium. One dark statement band (Register CTA).
+   Brand (theeventplannerexpo.com): navy #000448 · red · gold #F8C646
+   Type: Space Grotesk (display) · Instrument Serif italic (accents) · Inter (UI)
+   ========================================================================== */
+@theme {
+  /* Brand navy / indigo scale */
+  --color-ink-50: #eef0f8;
+  --color-ink-100: #dcdfef;
+  --color-ink-200: #b4bade;
+  --color-ink-300: #7e86c0;
+  --color-ink-400: #4a529c;
+  --color-ink-500: #232b7a;
+  --color-ink-600: #0d1360;
+  --color-ink-700: #000448; /* brand primary */
+  --color-ink-800: #010330;
+  --color-ink-900: #010219;
+
+  /* Text neutrals (indigo-biased) */
+  --color-heading: #070a33;
+  --color-body: #4a5068;
+  --color-muted: #838aa2;
+  --color-line: #e8eaf3;
+  --color-paper: #ffffff;
+  --color-paper-2: #f6f7fc;
+
+  /* Signature red — tuned from brand #FF0000 for screens */
+  --color-red-50: #fef1f2;
+  --color-red-500: #e8192c;
+  --color-red-600: #c9101f;
+  --color-red-700: #a80d19;
+
+  /* Gold */
+  --color-gold-400: #f8c646;
+  --color-gold-500: #e0a82e;
+  --color-gold-600: #b8831a;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-body);
+  text-rendering: optimizeLegibility;
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* Fluid display scale --------------------------------------------------------*/
+.display-hero {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-size: clamp(2.3rem, 4.6vw, 4.2rem);
+}
+.display-section {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-size: clamp(1.9rem, 3.6vw, 3.1rem);
+}
+
+/* Italic serif accent — the editorial counterpoint inside display headings */
+.serif-accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.kicker {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.7rem;
+}
+
+/* Light hero surface ---------------------------------------------------------*/
+.hero-light {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(56% 48% at 8% 0%, rgba(0, 4, 72, 0.1) 0%, transparent 60%),
+    radial-gradient(48% 42% at 94% 6%, rgba(232, 25, 44, 0.09) 0%, transparent 58%),
+    radial-gradient(52% 44% at 74% 100%, rgba(248, 198, 70, 0.16) 0%, transparent 60%),
+    linear-gradient(180deg, #eef1fd 0%, #f9faff 58%, #ffffff 100%);
+}
+
+/* Drifting aurora blobs — the colour and life behind the hero */
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(64px);
+  will-change: transform;
+}
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(56px, 34px) scale(1.1);
+  }
+}
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-48px, 42px) scale(1.06);
+  }
+}
+@keyframes drift-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(38px, -44px) scale(1.12);
+  }
+}
+.drift-a {
+  animation: drift-a 16s ease-in-out infinite;
+}
+.drift-b {
+  animation: drift-b 19s ease-in-out infinite;
+}
+.drift-c {
+  animation: drift-c 22s ease-in-out infinite;
+}
+
+/* Faint blueprint grid, faded out towards the edges */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(7, 10, 51, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(7, 10, 51, 0.045) 1px, transparent 1px);
+  background-size: 46px 46px;
+  -webkit-mask-image: radial-gradient(72% 68% at 50% 34%, black 20%, transparent 78%);
+  mask-image: radial-gradient(72% 68% at 50% 34%, black 20%, transparent 78%);
+}
+
+/* Dark statement band (Register CTA) -----------------------------------------*/
+.band-dark {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(90% 64% at 84% -10%, rgba(232, 25, 44, 0.2) 0%, transparent 48%),
+    radial-gradient(70% 55% at 8% 0%, rgba(35, 43, 122, 0.55) 0%, transparent 58%),
+    linear-gradient(180deg, #000448 0%, #010330 68%, #010219 100%);
+}
+
+/* Film grain (SVG noise, no asset) */
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.hairline-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold-400), transparent);
+}
+
+/* Live pulse dot (hero chip) --------------------------------------------------*/
+@keyframes pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(232, 25, 44, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(232, 25, 44, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 25, 44, 0);
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 2.2s ease-out infinite;
+}
+
+/* Event ticket ---------------------------------------------------------------*/
+@keyframes ticket-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+.ticket-float {
+  animation: ticket-float 7s ease-in-out infinite;
+}
+
+/* Diagonal light sweep across the ticket */
+@keyframes ticket-shine {
+  0%,
+  60% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(230%) skewX(-18deg);
+  }
+}
+.ticket-shine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 42%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.09),
+    transparent
+  );
+  animation: ticket-shine 6.5s var(--ease-out-expo) infinite;
+  pointer-events: none;
+}
+
+.barcode {
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 2px,
+    transparent 2px 5px,
+    currentColor 5px 6px,
+    transparent 6px 11px,
+    currentColor 11px 14px,
+    transparent 14px 17px
+  );
+}
+
+/* Real photos render muted, then bloom to colour on card hover */
+.duotone {
+  filter: grayscale(1) contrast(1.04);
+  transition: filter 0.5s var(--ease-out-expo);
+}
+.group:hover .duotone {
+  filter: none;
+}
+
+/* Marquee ---------------------------------------------------------------------*/
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 46s linear infinite;
+}
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+/* Skyline window twinkle */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+.twinkle {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
+/* Entrance / scroll reveal ----------------------------------------------------*/
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.7s var(--ease-out-expo) both;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.7s var(--ease-out-expo),
+    transform 0.7s var(--ease-out-expo);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .twinkle,
+  .ticket-float,
+  .ticket-shine,
+  .pulse-dot,
+  .drift-a,
+  .drift-b,
+  .drift-c {
+    animation: none;
+  }
+  .animate-fade-up,
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.premium-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-200) transparent;
+}
+.premium-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.premium-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-ink-200);
+  border-radius: 999px;
+}
+
+::selection {
+  background: var(--color-red-500);
+  color: #fff;
+}
