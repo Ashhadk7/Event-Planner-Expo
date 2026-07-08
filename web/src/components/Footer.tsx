@@ -27,13 +27,13 @@ export function Footer() {
               links={[
                 { label: '2026 Speakers', to: '/2026-speakers' },
                 { label: 'Past Speakers', to: '/past-speakers' },
-                { label: 'Become a Speaker', to: '#register' },
+                { label: 'Become a Speaker', to: '/signup' },
               ]}
             />
             <FooterCol
               title="Expo"
               links={[
-                { label: 'Register', to: '#register' },
+                { label: 'Register', to: '/' },
                 { label: 'Exhibit', to: '#exhibit' },
                 { label: 'Schedule', to: '#schedule' },
               ]}

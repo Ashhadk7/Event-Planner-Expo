@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { PortalConfig } from '../data/portals'
 import { Reveal } from './Reveal'
 import { Skyline } from './Skyline'
@@ -40,21 +41,19 @@ export function RegisterCta({ portal }: RegisterCtaProps) {
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a
-            href="https://www.theeventplannerexpo.com/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/"
             className="group inline-flex h-13 items-center justify-center gap-2 rounded-full bg-red-500 px-8 text-[15px] font-semibold text-white shadow-[0_16px_44px_-14px_rgba(232,25,44,0.7)] transition-all duration-300 hover:bg-red-600"
           >
             Register for the Expo
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </a>
-          <a
-            href="#speakers"
+          </Link>
+          <Link
+            to="/signup"
             className="inline-flex h-13 items-center justify-center rounded-full border border-white/25 px-8 text-[15px] font-semibold text-white transition-colors duration-300 hover:border-white hover:bg-white/5"
           >
             Become a Speaker
-          </a>
+          </Link>
         </div>
       </Reveal>
     </section>
