@@ -1,51 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Logo } from '../components/ui/Logo'
 import { speakers, type Speaker } from '../data/speakers'
 import { EditSpeakerModal } from '../components/admin/EditSpeakerModal'
 
 export function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
   const [editingSpeaker, setEditingSpeaker] = useState<Speaker | null>(null)
 
-  // Simple mock login
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-paper-1 p-4">
-        <div className="w-full max-w-md rounded-2xl border border-line bg-white p-8 shadow-2xl">
-          <div className="mb-8 flex justify-center">
-            <Logo tone="dark" />
-          </div>
-          <h1 className="mb-6 text-center font-display text-2xl font-bold tracking-tight text-heading">
-            Admin Login
-          </h1>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              setIsAuthenticated(true)
-            }}
-            className="space-y-4"
-          >
-            <div>
-              <label className="mb-1.5 block text-sm font-semibold text-heading">Password</label>
-              <input
-                type="password"
-                required
-                className="w-full rounded-lg border border-line bg-paper-1 px-4 py-3 text-sm outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                placeholder="Enter admin password"
-                defaultValue="password123"
-              />
-            </div>
-            <button
-              type="submit"
-              className="mt-2 w-full rounded-lg bg-red-500 px-4 py-3 font-bold text-white transition-colors hover:bg-red-600"
-            >
-              Log In
-            </button>
-          </form>
-        </div>
-      </div>
-    )
+  useEffect(() => {
+    const isAuth = localStorage.getItem('epx_admin_auth')
+    if (isAuth !== 'true') {
+      navigate('/login')
+    }
+  }, [navigate])
+
+  const handleLogout = () => {
+    localStorage.removeItem('epx_admin_auth')
+    navigate('/login')
   }
 
   // Filter speakers based on the tab
@@ -71,7 +44,7 @@ export function AdminDashboard() {
         </div>
         <div className="flex items-center gap-4">
           <button className="text-sm font-semibold text-body hover:text-heading">Settings</button>
-          <button className="text-sm font-semibold text-body hover:text-heading">Log Out</button>
+          <button onClick={handleLogout} className="text-sm font-semibold text-body hover:text-heading">Log Out</button>
         </div>
       </nav>
 

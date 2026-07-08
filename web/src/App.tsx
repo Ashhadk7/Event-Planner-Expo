@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { PORTALS } from './data/portals'
 import { SpeakerHub } from './pages/SpeakerHub'
 import { AdminDashboard } from './pages/AdminDashboard'
+import { AdminLogin } from './pages/AdminLogin'
 import { SpeakerSignup } from './pages/SpeakerSignup'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Navigate to={PORTALS.upcoming.path} replace />} />
       <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/login" element={<AdminLogin />} />
       <Route path="/signup" element={<SpeakerSignup />} />
       <Route
         path={PORTALS.upcoming.path}
