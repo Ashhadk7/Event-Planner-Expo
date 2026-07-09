@@ -13,8 +13,11 @@ list all require the steps below. Do this once.
   (`RESEND_API_KEY`). Then verify a sending domain under **Domains** so you can
   send from an address on it (e.g. `speakers@yourdomain.com`).
 - **Vercel Blob** — Vercel dashboard → **Storage** → create a **Blob** store →
-  connect it to this project. Vercel injects `BLOB_READ_WRITE_TOKEN` automatically
-  (or copy it into the env vars below).
+  connect it to this project. NOTE: connecting only injects `BLOB_STORE_ID` and
+  `BLOB_WEBHOOK_PUBLIC_KEY`, **not** `BLOB_READ_WRITE_TOKEN`. Copy the token
+  yourself from the Blob store's **`.env.local`** tab (the `vercel_blob_rw_…`
+  value) and add it as `BLOB_READ_WRITE_TOKEN` below. This is only needed for
+  speaker headshot **uploads**; the rest of the app works without it.
 
 ## 2. Set environment variables
 
