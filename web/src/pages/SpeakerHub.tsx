@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import type { PortalConfig } from '../data/portals'
 import { NOTABLE_NAMES } from '../data/portals'
 import { SPEAKERS, type Speaker } from '../data/speakers'
+import { getPublicSpeakers } from '../lib/api'
 import { SPEAKER_TYPES, type SpeakerType } from '../data/speakerTypes'
 import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
@@ -25,10 +26,17 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
   const [type, setType] = useState<Filter>('All')
   const [active, setActive] = useState<Speaker | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
+  const [remote, setRemote] = useState<Speaker[] | null>(null)
+
+  useEffect(() => {
+    getPublicSpeakers().then((d) => setRemote(d.speakers as Speaker[])).catch(() => setRemote(null))
+  }, [])
+
+  const source = remote ?? SPEAKERS
 
   const portalSpeakers = useMemo(
-    () => SPEAKERS.filter((s) => portal.filterYear(s.year)),
-    [portal],
+    () => source.filter((s) => portal.filterYear(s.year)),
+    [portal, source],
   )
 
   const counts = useMemo(() => {
