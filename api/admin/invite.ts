@@ -1,3 +1,4 @@
+import { query } from "../_lib/db.ts";
 import { requireAdmin, hashPassword, randomToken, randomPassword } from "../_lib/auth.ts";
 import { sendInviteEmail } from "../_lib/email.ts";
 
@@ -7,9 +8,6 @@ export default async function handler(req: any, res: any) {
 
   const { firstName, lastName, email } = req.body ?? {};
   if (!firstName || !lastName || !email) return res.status(400).json({ error: "firstName, lastName and email are required" });
-
-  // Lazy import to avoid DB connection at module load time (allows test isolation)
-  const { query } = await import("../_lib/db.ts");
 
   const token = randomToken();
   const password = randomPassword();
