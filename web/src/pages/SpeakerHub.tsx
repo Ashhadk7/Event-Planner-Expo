@@ -15,6 +15,9 @@ import { SpeakerGrid } from '../components/SpeakerGrid'
 import { SpeakerModal } from '../components/SpeakerModal'
 import { RegisterCta } from '../components/RegisterCta'
 import { YearTabs } from '../components/YearTabs'
+import { Pagination } from '../components/Pagination'
+
+const PAGE_SIZE = 10
 
 interface SpeakerHubProps {
   portal: PortalConfig
@@ -28,6 +31,7 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
   const [active, setActive] = useState<Speaker | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const [remote, setRemote] = useState<Speaker[] | null>(null)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     getPublicSpeakers().then((d) => setRemote(d.speakers as Speaker[])).catch(() => setRemote(null))
@@ -83,6 +87,24 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
     })
   }, [portalSpeakers, query, type])
 
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+
+  // Reset to the first page whenever the result set changes (search, type,
+  // year tab) so we never land on a page that no longer exists.
+  useEffect(() => {
+    setPage(1)
+  }, [query, type, portal.key])
+
+  const paged = useMemo(
+    () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filtered, page],
+  )
+
+  const changePage = (p: number) => {
+    setPage(p)
+    document.getElementById('speakers')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   const resetFilters = () => {
     setQuery('')
     setType('All')
@@ -131,7 +153,8 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
           </div>
 
           <div className="mx-auto max-w-[1320px] px-5 py-10 sm:px-8">
-            <SpeakerGrid speakers={filtered} onOpen={openSpeaker} onReset={resetFilters} />
+            <SpeakerGrid speakers={paged} onOpen={openSpeaker} onReset={resetFilters} />
+            <Pagination page={page} pageCount={pageCount} onChange={changePage} />
           </div>
         </section>
 
