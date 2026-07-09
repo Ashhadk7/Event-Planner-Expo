@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/ui/Logo'
 import { Label, TextInput } from '../components/ui/Field'
 import { Lock, ArrowRight, ShieldCheck, LayoutGrid, Users, Sparkles } from 'lucide-react'
+import { adminLogin } from '../lib/api'
 
 export function AdminLogin() {
   const [password, setPassword] = useState('')
@@ -10,20 +11,19 @@ export function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setTimeout(() => {
-      if (password === 'admin123') {
-        localStorage.setItem('epx_admin_auth', 'true')
-        navigate('/admin')
-      } else {
-        setError('Incorrect password. Please try again.')
-        setPassword('')
-        setIsLoading(false)
-      }
-    }, 800)
-  }
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    try {
+      await adminLogin(password);
+      navigate('/admin');
+    } catch (err) {
+      setError('Incorrect password. Please try again.');
+      setPassword('');
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-paper-2">
