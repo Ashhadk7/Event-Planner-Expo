@@ -1,0 +1,17 @@
+import { query } from "../_lib/db.ts";
+import { verifyPassword, signToken } from "../_lib/auth.ts";
+
+export default async function handler(req: any, res: any) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  const { token, password } = req.body ?? {};
+  if (!token || !password) return res.status(400).json({ error: "token and password required" });
+
+  const rows = await query<{ id: string; password_hash: string }>(
+    `select id, password_hash from speakers where invite_token = $1`, [token]
+  );
+  if (rows.length === 0) return res.status(404).json({ error: "Invalid link" });
+  if (!(await verifyPassword(password, rows[0].password_hash))) {
+    return res.status(401).json({ error: "Incorrect password" });
+  }
+  return res.status(200).json({ token: signToken({ sub: rows[0].id, role: "speaker" }) });
+}
