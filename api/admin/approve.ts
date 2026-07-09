@@ -1,6 +1,6 @@
-import { query } from "../_lib/db.ts";
-import { withErrors } from "../_lib/handler.ts";
-import { requireAdmin } from "../_lib/auth.ts";
+import { query } from "../_lib/db.js";
+import { withErrors } from "../_lib/handler.js";
+import { requireAdmin } from "../_lib/auth.js";
 
 const handler = async (req: any, res: any) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });

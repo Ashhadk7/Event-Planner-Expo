@@ -1,4 +1,4 @@
-import { query } from "./_lib/db.ts";
+import { query } from "./_lib/db.js";
 
 function slugify(first: string, last: string) {
   return `${first ?? ""}-${last ?? ""}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");

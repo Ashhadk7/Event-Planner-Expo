@@ -1,5 +1,5 @@
 import { put } from "@vercel/blob";
-import { bearer } from "../_lib/auth.ts";
+import { bearer } from "../_lib/auth.js";
 
 export const config = { api: { bodyParser: false } };
 

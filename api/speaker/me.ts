@@ -1,7 +1,7 @@
-import { query } from "../_lib/db.ts";
-import { withErrors } from "../_lib/handler.ts";
-import { bearer } from "../_lib/auth.ts";
-import { validateProfile } from "../_lib/profile.ts";
+import { query } from "../_lib/db.js";
+import { withErrors } from "../_lib/handler.js";
+import { bearer } from "../_lib/auth.js";
+import { validateProfile } from "../_lib/profile.js";
 
 const handler = async (req: any, res: any) => {
   const payload = bearer<{ sub?: string; role?: string }>(req);

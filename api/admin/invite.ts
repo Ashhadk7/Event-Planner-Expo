@@ -1,6 +1,6 @@
-import { query } from "../_lib/db.ts";
-import { requireAdmin, hashPassword, randomToken, randomPassword } from "../_lib/auth.ts";
-import { sendInviteEmail } from "../_lib/email.ts";
+import { query } from "../_lib/db.js";
+import { requireAdmin, hashPassword, randomToken, randomPassword } from "../_lib/auth.js";
+import { sendInviteEmail } from "../_lib/email.js";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
