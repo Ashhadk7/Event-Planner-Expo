@@ -33,3 +33,20 @@ describe("validateProfile", () => {
     if (r.ok) { expect(Array.isArray(r.value.expertise)).toBe(true); expect(r.value.year).toBe(2026); }
   });
 });
+
+describe("validateProfile year edge cases", () => {
+  const base = {
+    firstName: "Mario", lastName: "Stewart", title: "Founder & CEO",
+    company: "Stewart Experiential", country: "United States",
+    bio: "Bio", expertise: ["Experiential"], photoUrl: "",
+    linkedin: "https://linkedin.com/in/x", type: "Founder",
+  };
+  it("rejects an empty-string year (would coerce to 0)", async () => {
+    const { validateProfile } = await import("../../api/_lib/profile.ts");
+    expect(validateProfile({ ...base, year: "" }).ok).toBe(false);
+  });
+  it("rejects a missing year", async () => {
+    const { validateProfile } = await import("../../api/_lib/profile.ts");
+    expect(validateProfile({ ...base }).ok).toBe(false);
+  });
+});

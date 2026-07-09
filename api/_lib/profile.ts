@@ -27,6 +27,11 @@ export function validateProfile(input: unknown): Result {
   const type = str("type");
   if (!SPEAKER_TYPES.includes(type)) return { ok: false, error: `type must be one of ${SPEAKER_TYPES.join(", ")}` };
 
+  // reject blank/empty year: Number("") is 0 which would pass isFinite and
+  // silently publish year 0. Require a real numeric value.
+  if (b.year === "" || b.year === null || b.year === undefined) {
+    return { ok: false, error: "year is required" };
+  }
   const year = Number(b.year);
   if (!Number.isFinite(year)) return { ok: false, error: "year must be a number" };
 
