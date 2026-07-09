@@ -1,9 +1,28 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
+
+// Gmail SMTP via an App Password. Delivers to any address without domain
+// verification. Credentials come from GMAIL_USER + GMAIL_APP_PASSWORD env vars.
+// The transporter is created lazily (not at module load) so importing this
+// module never requires the env vars to be present.
+let _transport: nodemailer.Transporter | null = null;
+
+function transport(): nodemailer.Transporter {
+  if (!_transport) {
+    const user = process.env.GMAIL_USER;
+    const pass = process.env.GMAIL_APP_PASSWORD;
+    if (!user || !pass) throw new Error("GMAIL_USER / GMAIL_APP_PASSWORD are not set");
+    _transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user, pass },
+    });
+  }
+  return _transport;
+}
 
 export async function sendInviteEmail(to: string, name: string, link: string, password: string): Promise<void> {
-  const resend = new Resend(process.env.RESEND_API_KEY!);
-  await resend.emails.send({
-    from: process.env.RESEND_FROM!,
+  const from = process.env.GMAIL_FROM || process.env.GMAIL_USER!;
+  await transport().sendMail({
+    from: `The Event Planner Expo <${from}>`,
     to,
     subject: "Your Event Planner Expo speaker portal",
     html: `
