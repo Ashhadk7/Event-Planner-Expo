@@ -19,7 +19,8 @@ describe("speaker me guard", () => {
     const { signToken } = await import("../../api/_lib/auth.ts");
     const { default: me } = await import("../../api/speaker/me.ts");
     const res = mockRes();
-    await me({ method: "GET", headers: { authorization: "Bearer " + signToken({ role: "admin" }) } }, res);
+    // include sub so the ONLY failing guard is role !== "speaker" (isolates the role check)
+    await me({ method: "GET", headers: { authorization: "Bearer " + signToken({ role: "admin", sub: "admin-1" }) } }, res);
     expect(res.statusCode).toBe(401);
   });
 });

@@ -1,7 +1,7 @@
 import { query } from "./_lib/db.ts";
 
 function slugify(first: string, last: string) {
-  return `${first}-${last}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return `${first ?? ""}-${last ?? ""}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 export default async function handler(req: any, res: any) {
@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
     );
     const speakers = rows.map((r) => ({
       id: r.id,
-      slug: slugify(r.approved_data.firstName, r.approved_data.lastName),
+      slug: slugify(r.approved_data?.firstName, r.approved_data?.lastName),
       ...r.approved_data,
     }));
     return res.status(200).json({ speakers });
