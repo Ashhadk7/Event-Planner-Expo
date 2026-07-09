@@ -26,9 +26,12 @@ export function SpeakerModal({ speaker, onClose }: SpeakerModalProps) {
 
   if (!speaker) return null
 
-  const linkedin = speaker.linkedin.startsWith('http')
-    ? speaker.linkedin
-    : `https://${speaker.linkedin}`
+  // linkedin may be an empty string (speakers can be approved without it) and,
+  // for defensively-typed API data, could be absent — guard before deref.
+  const rawLinkedin = speaker.linkedin ?? ''
+  const linkedin = rawLinkedin.startsWith('http')
+    ? rawLinkedin
+    : `https://${rawLinkedin}`
 
   return createPortal(
     <div
@@ -94,15 +97,17 @@ export function SpeakerModal({ speaker, onClose }: SpeakerModalProps) {
         </div>
 
         <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-line px-6 py-5">
-          <a
-            href={linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ink-700 px-5 text-sm font-bold text-white transition-colors duration-200 hover:bg-ink-800"
-          >
-            <LinkedInIcon className="h-4 w-4" />
-            Connect on LinkedIn
-          </a>
+          {rawLinkedin && (
+            <a
+              href={linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ink-700 px-5 text-sm font-bold text-white transition-colors duration-200 hover:bg-ink-800"
+            >
+              <LinkedInIcon className="h-4 w-4" />
+              Connect on LinkedIn
+            </a>
+          )}
           <ShareMenu speaker={speaker} />
         </div>
       </div>
