@@ -25,3 +25,14 @@ export function randomPassword(): string {
   // readable-ish 12 char password
   return randomBytes(9).toString("base64url").slice(0, 12);
 }
+
+/** Extract "Authorization: Bearer <jwt>" and return the decoded payload, or null. */
+export function bearer<T>(req: { headers: Record<string, string | string[] | undefined> }): T | null {
+  const raw = req.headers["authorization"];
+  const h = Array.isArray(raw) ? raw[0] : raw;
+  if (!h || !h.startsWith("Bearer ")) return null;
+  return verifyToken<T>(h.slice(7));
+}
+export function requireAdmin(req: { headers: Record<string, string | string[] | undefined> }): boolean {
+  return bearer<{ role?: string }>(req)?.role === "admin";
+}
