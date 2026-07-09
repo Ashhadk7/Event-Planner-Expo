@@ -14,6 +14,7 @@ import { SearchFilterBar } from '../components/SearchFilterBar'
 import { SpeakerGrid } from '../components/SpeakerGrid'
 import { SpeakerModal } from '../components/SpeakerModal'
 import { RegisterCta } from '../components/RegisterCta'
+import { YearTabs } from '../components/YearTabs'
 
 interface SpeakerHubProps {
   portal: PortalConfig
@@ -104,7 +105,10 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
         </div>
 
         <section id="speakers" className="scroll-mt-32">
-          <div className="mx-auto max-w-[1320px] px-5 pt-16 sm:px-8 sm:pt-20">
+          <div className="pt-12 sm:pt-16">
+            <YearTabs active={portal.key} />
+          </div>
+          <div className="mx-auto max-w-[1320px] px-5 pt-8 sm:px-8">
             <SectionHeader
               kicker="The Lineup"
               title={
