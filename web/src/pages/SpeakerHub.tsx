@@ -4,7 +4,6 @@ import type { PortalConfig } from '../data/portals'
 import { NOTABLE_NAMES } from '../data/portals'
 import { SPEAKERS, type Speaker } from '../data/speakers'
 import { getPublicSpeakers } from '../lib/api'
-import { SPEAKER_TYPES, type SpeakerType } from '../data/speakerTypes'
 import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { Hero } from '../components/Hero'
@@ -23,11 +22,8 @@ interface SpeakerHubProps {
   portal: PortalConfig
 }
 
-type Filter = SpeakerType | 'All'
-
 export function SpeakerHub({ portal }: SpeakerHubProps) {
   const [query, setQuery] = useState('')
-  const [type, setType] = useState<Filter>('All')
   const [active, setActive] = useState<Speaker | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const [remote, setRemote] = useState<Speaker[] | null>(null)
@@ -44,14 +40,6 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
     [portal, source],
   )
 
-  const counts = useMemo(() => {
-    const c: Record<string, number> = { All: portalSpeakers.length }
-    SPEAKER_TYPES.forEach((t) => {
-      c[t] = portalSpeakers.filter((s) => s.type === t).length
-    })
-    return c
-  }, [portalSpeakers])
-
   useEffect(() => {
     const slug = searchParams.get('speaker')
     const match = slug ? portalSpeakers.find((s) => s.slug === slug) : null
@@ -60,7 +48,6 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
 
   useEffect(() => {
     setQuery('')
-    setType('All')
   }, [portal.key])
 
   const openSpeaker = (s: Speaker) => {
@@ -77,23 +64,21 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return portalSpeakers.filter((s) => {
-      const matchesType = type === 'All' || s.type === type
-      const matchesQuery =
-        !q ||
+    if (!q) return portalSpeakers
+    return portalSpeakers.filter(
+      (s) =>
         `${s.firstName} ${s.lastName}`.toLowerCase().includes(q) ||
-        s.company.toLowerCase().includes(q)
-      return matchesType && matchesQuery
-    })
-  }, [portalSpeakers, query, type])
+        s.company.toLowerCase().includes(q),
+    )
+  }, [portalSpeakers, query])
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
 
-  // Reset to the first page whenever the result set changes (search, type,
-  // year tab) so we never land on a page that no longer exists.
+  // Reset to the first page whenever the result set changes (search, year tab)
+  // so we never land on a page that no longer exists.
   useEffect(() => {
     setPage(1)
-  }, [query, type, portal.key])
+  }, [query, portal.key])
 
   const paged = useMemo(
     () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
@@ -107,7 +92,6 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
 
   const resetFilters = () => {
     setQuery('')
-    setType('All')
   }
 
   return (
@@ -143,13 +127,7 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
           </div>
 
           <div className="mt-8">
-            <SearchFilterBar
-              query={query}
-              onQuery={setQuery}
-              type={type}
-              onType={setType}
-              counts={counts}
-            />
+            <SearchFilterBar query={query} onQuery={setQuery} />
           </div>
 
           <div className="mx-auto max-w-[1320px] px-5 py-10 sm:px-8">
