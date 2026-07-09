@@ -1,7 +1,8 @@
 import { query } from "../_lib/db.ts";
+import { withErrors } from "../_lib/handler.ts";
 import { requireAdmin } from "../_lib/auth.ts";
 
-export default async function handler(req: any, res: any) {
+const handler = async (req: any, res: any) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   if (!requireAdmin(req)) return res.status(401).json({ error: "Admin auth required" });
   const id = req.body?.id;
@@ -13,3 +14,5 @@ export default async function handler(req: any, res: any) {
   );
   return res.status(200).json({ ok: true });
 }
+
+export default withErrors(handler);

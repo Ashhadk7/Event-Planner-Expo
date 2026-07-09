@@ -26,5 +26,8 @@ export default async function handler(req: any, res: any) {
   } catch {
     emailSent = false; // row still created; admin can resend
   }
-  return res.status(200).json({ ok: true, emailSent, link });
+  // Do not return `link` in the body — it embeds the invite token (a
+  // login-credential-equivalent) and would land in network logs. The admin
+  // doesn't need it; the speaker gets it by email.
+  return res.status(200).json({ ok: true, emailSent });
 }

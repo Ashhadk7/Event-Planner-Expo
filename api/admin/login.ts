@@ -1,6 +1,7 @@
 import { signToken } from "../_lib/auth.ts";
+import { withErrors } from "../_lib/handler.ts";
 
-export default async function handler(req: any, res: any) {
+const handler = async (req: any, res: any) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   const password = req.body?.password;
   if (typeof password !== "string" || password !== process.env.ADMIN_PASSWORD) {
@@ -8,3 +9,5 @@ export default async function handler(req: any, res: any) {
   }
   return res.status(200).json({ token: signToken({ role: "admin" }) });
 }
+
+export default withErrors(handler);

@@ -1,7 +1,8 @@
 import { query } from "../_lib/db.ts";
+import { withErrors } from "../_lib/handler.ts";
 import { requireAdmin } from "../_lib/auth.ts";
 
-export default async function handler(req: any, res: any) {
+const handler = async (req: any, res: any) => {
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });
   if (!requireAdmin(req)) return res.status(401).json({ error: "Admin auth required" });
   const rows = await query<{ id: string; approved_data: any; pending_data: any; email: string }>(
@@ -11,3 +12,5 @@ export default async function handler(req: any, res: any) {
     pending: rows.map((r) => ({ id: r.id, email: r.email, approved: r.approved_data, pending: r.pending_data })),
   });
 }
+
+export default withErrors(handler);

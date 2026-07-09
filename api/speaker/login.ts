@@ -1,7 +1,8 @@
 import { query } from "../_lib/db.ts";
+import { withErrors } from "../_lib/handler.ts";
 import { verifyPassword, signToken } from "../_lib/auth.ts";
 
-export default async function handler(req: any, res: any) {
+const handler = async (req: any, res: any) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   const { token, password } = req.body ?? {};
   if (!token || !password) return res.status(400).json({ error: "token and password required" });
@@ -15,3 +16,5 @@ export default async function handler(req: any, res: any) {
   }
   return res.status(200).json({ token: signToken({ sub: rows[0].id, role: "speaker" }) });
 }
+
+export default withErrors(handler);

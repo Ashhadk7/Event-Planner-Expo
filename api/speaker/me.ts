@@ -1,8 +1,9 @@
 import { query } from "../_lib/db.ts";
+import { withErrors } from "../_lib/handler.ts";
 import { bearer } from "../_lib/auth.ts";
 import { validateProfile } from "../_lib/profile.ts";
 
-export default async function handler(req: any, res: any) {
+const handler = async (req: any, res: any) => {
   const payload = bearer<{ sub?: string; role?: string }>(req);
   if (!payload || payload.role !== "speaker" || !payload.sub) {
     return res.status(401).json({ error: "Speaker auth required" });
@@ -30,3 +31,5 @@ export default async function handler(req: any, res: any) {
 
   return res.status(405).json({ error: "Method not allowed" });
 }
+
+export default withErrors(handler);

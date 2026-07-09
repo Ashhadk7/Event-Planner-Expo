@@ -44,9 +44,9 @@ export function AdminLogin() {
             </p>
             <ul className="mt-10 space-y-4">
               {[
-                { Icon: LayoutGrid, label: 'Approve & publish speakers instantly' },
-                { Icon: Users, label: 'Manage the 2026 and past rosters' },
-                { Icon: Sparkles, label: 'Edit profiles, types and visibility' },
+                { Icon: LayoutGrid, label: 'Review & approve speaker submissions' },
+                { Icon: Users, label: 'Invite speakers by email' },
+                { Icon: Sparkles, label: 'Publish approved profiles to the site' },
               ].map(({ Icon, label }) => (
                 <li key={label} className="flex items-center gap-3 text-sm text-white/80">
                   <span className="grid h-9 w-9 place-items-center rounded-full bg-white/5 text-gold-400 ring-1 ring-white/10">
@@ -133,9 +133,6 @@ export function AdminLogin() {
             </form>
           </div>
 
-          <p className="mt-6 text-center text-[13px] text-muted">
-            Demo password: <span className="font-semibold text-body">admin123</span>
-          </p>
         </div>
       </div>
     </div>

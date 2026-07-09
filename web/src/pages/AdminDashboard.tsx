@@ -46,6 +46,7 @@ export function AdminDashboard() {
   const [pendingApps, setPendingApps] = useState<any[]>([])
   const [inviteForm, setInviteForm] = useState({ firstName: '', lastName: '', email: '' })
   const [inviteMsg, setInviteMsg] = useState('')
+  const [inviteOk, setInviteOk] = useState(true)
 
   useEffect(() => {
     if (!adminToken()) { navigate('/login'); return; }
@@ -62,9 +63,10 @@ export function AdminDashboard() {
     e.preventDefault();
     try {
       const r = await invite(inviteForm.firstName, inviteForm.lastName, inviteForm.email);
+      setInviteOk(r.emailSent);
       setInviteMsg(r.emailSent ? 'Invite sent.' : 'Speaker created, but the email failed to send.');
       setInviteForm({ firstName: '', lastName: '', email: '' });
-    } catch (err: any) { setInviteMsg(err.message || 'Invite failed.'); }
+    } catch (err: any) { setInviteOk(false); setInviteMsg(err.message || 'Invite failed.'); }
   };
 
   const q = query.trim().toLowerCase()
@@ -255,7 +257,7 @@ export function AdminDashboard() {
               </button>
             </form>
             {inviteMsg && (
-              <p className="mt-3 text-[13px] font-medium text-green-700">{inviteMsg}</p>
+              <p className={`mt-3 text-[13px] font-medium ${inviteOk ? 'text-green-700' : 'text-red-600'}`}>{inviteMsg}</p>
             )}
           </div>
         )}
@@ -359,12 +361,13 @@ export function AdminDashboard() {
                   />
                 )}
 
-                {/* Live-speaker tabs — wired in Task 7 */}
+                {/* Published speakers live on the public site; the admin panel
+                    manages invitations and the pending-approval queue. */}
                 {activeTab !== 'pending' && (
                   <EmptyRow
                     colSpan={4}
-                    title="Coming soon"
-                    sub="Live speaker roster is loaded from the API in the next task."
+                    title="Published speakers appear on the public site"
+                    sub="Speakers edit their own profiles via their invite link; approve their changes in the Pending tab to publish."
                   />
                 )}
               </tbody>
