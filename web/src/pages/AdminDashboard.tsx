@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Logo } from '../components/ui/Logo'
 import { TextInput } from '../components/ui/Field'
-import { adminToken, adminLogout, invite, getPending, approve as apiApprove, reject as apiReject } from '../lib/api'
+import { adminToken, adminLogout, invite, getPending, approve as apiApprove, reject as apiReject, getPublicSpeakers } from '../lib/api'
 import {
   Search,
   CheckCircle2,
@@ -44,21 +44,31 @@ export function AdminDashboard() {
   const [query, setQuery] = useState('')
 
   const [pendingApps, setPendingApps] = useState<any[]>([])
+  const [approvedSpeakers, setApprovedSpeakers] = useState<any[]>([])
   const [inviteForm, setInviteForm] = useState({ firstName: '', lastName: '', email: '' })
   const [inviteMsg, setInviteMsg] = useState('')
   const [inviteOk, setInviteOk] = useState(true)
 
+  const refreshData = async () => {
+    const [pending, speakers] = await Promise.all([
+      getPending().catch(() => ({ pending: [] })),
+      getPublicSpeakers().catch(() => ({ speakers: [] })),
+    ])
+    setPendingApps(pending.pending)
+    setApprovedSpeakers(speakers.speakers)
+  }
+
   useEffect(() => {
     if (!adminToken()) { navigate('/login'); return; }
-    getPending().then((d) => setPendingApps(d.pending)).catch(() => setPendingApps([]))
+    refreshData()
   }, [navigate])
 
   useEffect(() => setQuery(''), [activeTab])
 
   const handleLogout = () => { adminLogout(); navigate('/login'); }
 
-  const handleApprove = async (id: string) => { await apiApprove(id); const d = await getPending(); setPendingApps(d.pending); }
-  const handleReject  = async (id: string) => { await apiReject(id);  const d = await getPending(); setPendingApps(d.pending); }
+  const handleApprove = async (id: string) => { await apiApprove(id); await refreshData(); }
+  const handleReject  = async (id: string) => { await apiReject(id);  await refreshData(); }
   const handleInvite  = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -73,11 +83,19 @@ export function AdminDashboard() {
   const matchApp = (a: PendingRow) =>
     !q || `${a.pending.firstName} ${a.pending.lastName} ${a.pending.company} ${a.pending.title}`.toLowerCase().includes(q)
 
-  const rows = activeTab === 'pending' ? pendingApps.filter(matchApp) : []
+  const matchSpeaker = (s: any) =>
+    !q || `${s.firstName} ${s.lastName} ${s.company} ${s.title}`.toLowerCase().includes(q)
 
-  // Live-speaker tabs are placeholders — data comes from /api/speakers (Task 7)
-  const upcomingCount = 0
-  const pastCount = 0
+  const upcomingSpeakers = approvedSpeakers.filter((s) => s.year >= 2026)
+  const pastSpeakers = approvedSpeakers.filter((s) => s.year < 2026)
+
+  const rows =
+    activeTab === 'pending' ? pendingApps.filter(matchApp) :
+    activeTab === 'upcoming' ? upcomingSpeakers.filter(matchSpeaker) :
+    pastSpeakers.filter(matchSpeaker)
+
+  const upcomingCount = upcomingSpeakers.length
+  const pastCount = pastSpeakers.length
 
   const NAV: { key: Tab; label: string; icon: typeof Clock; badge?: number }[] = [
     { key: 'pending', label: 'Pending Apps', icon: Clock, badge: pendingApps.length },
@@ -361,13 +379,45 @@ export function AdminDashboard() {
                   />
                 )}
 
-                {/* Published speakers live on the public site; the admin panel
-                    manages invitations and the pending-approval queue. */}
-                {activeTab !== 'pending' && (
+                {activeTab !== 'pending' && rows.map((s: any) => (
+                  <tr key={s.id} className="transition-colors hover:bg-paper-2/60">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3.5">
+                        {s.photoUrl ? (
+                          <img src={s.photoUrl} alt={`${s.firstName} ${s.lastName}`} className="h-11 w-11 shrink-0 rounded-full object-cover ring-1 ring-line" />
+                        ) : (
+                          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-ink-600 to-ink-900 text-[13px] font-bold text-white">
+                            {s.firstName?.[0]}{s.lastName?.[0]}
+                          </span>
+                        )}
+                        <div>
+                          <div className="font-semibold text-heading">{s.firstName} {s.lastName}</div>
+                          <div className="mt-0.5 text-[12px] text-muted">{s.country}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-heading">{s.title}</div>
+                      <div className="text-muted">{s.company}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center rounded-full bg-ink-50 px-3 py-1 text-[12px] font-semibold text-ink-700">
+                        {s.type || '—'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center rounded-full bg-green-50 px-3 py-1 text-[12px] font-semibold text-green-700">
+                        Live
+                      </span>
+                    </td>
+                    <td className="px-6 py-4" />
+                  </tr>
+                ))}
+                {activeTab !== 'pending' && rows.length === 0 && (
                   <EmptyRow
-                    colSpan={4}
-                    title="Published speakers appear on the public site"
-                    sub="Speakers edit their own profiles via their invite link; approve their changes in the Pending tab to publish."
+                    colSpan={5}
+                    title={q ? 'No matching speakers' : 'No approved speakers yet'}
+                    sub={q ? 'Try a different search.' : 'Approve pending applications to add speakers to the roster.'}
                   />
                 )}
               </tbody>

@@ -74,7 +74,15 @@ export function SpeakerPortal() {
     setUploading(true)
     setError('')
     try {
-      set('photoUrl', await uploadPhoto(f))
+      const url = await uploadPhoto(f)
+      set('photoUrl', url)
+      // Auto-save immediately so the photo is persisted without a manual Save click.
+      // Only if the required fields are already filled — otherwise the speaker must Save manually.
+      if (profile.firstName && profile.lastName && profile.title && profile.company) {
+        await saveMe({ ...profile, photoUrl: url, year: Number(profile.year) })
+        setHasPending(true)
+        setSaved(true)
+      }
     } catch (err: any) {
       setError(err?.message || 'Photo upload failed. Try a smaller image.')
     } finally {
