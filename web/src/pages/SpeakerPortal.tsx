@@ -74,13 +74,7 @@ export function SpeakerPortal() {
     setUploading(true)
     setError('')
     try {
-      const url = await uploadPhoto(f)
-      set('photoUrl', url)
-      // Auto-save immediately so the photo is persisted without a manual Save click
-      const updated = { ...profile, photoUrl: url, year: Number(profile.year) }
-      await saveMe(updated)
-      setHasPending(true)
-      setSaved(true)
+      set('photoUrl', await uploadPhoto(f))
     } catch (err: any) {
       setError(err?.message || 'Photo upload failed. Try a smaller image.')
     } finally {

@@ -408,18 +408,10 @@ function ReviewModal({
       <div className="animate-fade-up relative w-full max-w-2xl overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl">
         <span className="absolute inset-x-0 top-0 h-1 bg-red-500" />
         <div className="flex items-start gap-4 border-b border-line px-6 py-6 sm:px-8">
-          {app.pending.photoUrl ? (
-            <img
-              src={app.pending.photoUrl as string}
-              alt={`${app.pending.firstName} ${app.pending.lastName}`}
-              className="h-14 w-14 shrink-0 rounded-2xl object-cover ring-1 ring-line"
-            />
-          ) : (
-            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-ink-600 to-ink-900 text-lg font-bold text-white">
-              {app.pending.firstName?.[0]}
-              {app.pending.lastName?.[0]}
-            </span>
-          )}
+          <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-ink-600 to-ink-900 text-lg font-bold text-white">
+            {app.pending.firstName?.[0]}
+            {app.pending.lastName?.[0]}
+          </span>
           <div className="min-w-0 flex-1">
             <span className="inline-flex items-center rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-semibold text-ink-700">
               {app.pending.type || 'Speaker'}
