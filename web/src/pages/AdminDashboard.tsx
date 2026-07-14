@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Logo } from '../components/ui/Logo'
 import { TextInput } from '../components/ui/Field'
-import { adminToken, adminLogout, invite, getPending, approve as apiApprove, reject as apiReject, getPublicSpeakers } from '../lib/api'
+import { adminToken, adminLogout, invite, bulkInvite, getPending, approve as apiApprove, reject as apiReject, getPublicSpeakers } from '../lib/api'
 import {
   Search,
   CheckCircle2,
@@ -15,6 +15,7 @@ import {
   X,
   Mail,
   Send,
+  Upload,
 } from 'lucide-react'
 import { LinkedInIcon } from '../components/ui/BrandIcons'
 
@@ -48,6 +49,9 @@ export function AdminDashboard() {
   const [inviteForm, setInviteForm] = useState({ firstName: '', lastName: '', email: '' })
   const [inviteMsg, setInviteMsg] = useState('')
   const [inviteOk, setInviteOk] = useState(true)
+  const [bulkBusy, setBulkBusy] = useState(false)
+  const [bulkMsg, setBulkMsg] = useState('')
+  const [bulkOk, setBulkOk] = useState(true)
 
   const refreshData = async () => {
     const [pending, speakers] = await Promise.all([
@@ -77,6 +81,24 @@ export function AdminDashboard() {
       setInviteMsg(r.emailSent ? 'Invite sent.' : 'Speaker created, but the email failed to send.');
       setInviteForm({ firstName: '', lastName: '', email: '' });
     } catch (err: any) { setInviteOk(false); setInviteMsg(err.message || 'Invite failed.'); }
+  };
+  const handleBulkCsv = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // allow re-uploading the same file
+    if (!file) return;
+    setBulkBusy(true); setBulkMsg('');
+    try {
+      const csv = await file.text();
+      const r = await bulkInvite(csv);
+      const parts = [`${r.invited} invite${r.invited === 1 ? '' : 's'} sent.`];
+      if (r.skipped.length) parts.push(`${r.skipped.length} skipped (already invited): ${r.skipped.join(', ')}`);
+      if (r.emailFailed.length) parts.push(`${r.emailFailed.length} created but email failed: ${r.emailFailed.join(', ')}`);
+      if (r.parseErrors.length) parts.push(`Rows with problems:\n${r.parseErrors.join('\n')}`);
+      setBulkOk(r.emailFailed.length === 0 && r.parseErrors.length === 0);
+      setBulkMsg(parts.join('\n'));
+    } catch (err: any) {
+      setBulkOk(false); setBulkMsg(err.message || 'Bulk invite failed.');
+    } finally { setBulkBusy(false); }
   };
 
   const q = query.trim().toLowerCase()
@@ -277,6 +299,31 @@ export function AdminDashboard() {
             {inviteMsg && (
               <p className={`mt-3 text-[13px] font-medium ${inviteOk ? 'text-green-700' : 'text-red-600'}`}>{inviteMsg}</p>
             )}
+
+            <div className="mt-6 border-t border-line pt-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h3 className="font-display text-sm font-bold tracking-tight text-heading">Bulk Invite from CSV</h3>
+                  <p className="mt-0.5 text-[13px] text-muted">
+                    Upload a CSV with columns: First Name, Last Name, Email. Every row gets an invite email automatically.
+                  </p>
+                </div>
+                <label className={`inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-ink-700 px-5 text-sm font-semibold text-ink-700 transition-colors hover:bg-ink-700 hover:text-white ${bulkBusy ? 'pointer-events-none opacity-60' : ''}`}>
+                  <Upload className="h-4 w-4" />
+                  {bulkBusy ? 'Inviting…' : 'Upload CSV'}
+                  <input
+                    type="file"
+                    accept=".csv,text/csv"
+                    className="hidden"
+                    onChange={handleBulkCsv}
+                    disabled={bulkBusy}
+                  />
+                </label>
+              </div>
+              {bulkMsg && (
+                <p className={`mt-3 whitespace-pre-line text-[13px] font-medium ${bulkOk ? 'text-green-700' : 'text-red-600'}`}>{bulkMsg}</p>
+              )}
+            </div>
           </div>
         )}
 

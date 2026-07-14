@@ -20,6 +20,8 @@ export async function adminLogin(password: string) {
 export const adminLogout = () => localStorage.removeItem(ADMIN_KEY);
 export const invite = (firstName: string, lastName: string, email: string) =>
   jsonFetch("/api/admin/invite", { method: "POST", headers: adminAuth(), body: JSON.stringify({ firstName, lastName, email }) });
+export const bulkInvite = (csv: string): Promise<{ ok: boolean; invited: number; skipped: string[]; emailFailed: string[]; parseErrors: string[] }> =>
+  jsonFetch("/api/admin/bulk-invite", { method: "POST", headers: adminAuth(), body: JSON.stringify({ csv }) });
 export const getPending = () => jsonFetch("/api/admin/pending", { headers: adminAuth() });
 export const approve = (id: string) => jsonFetch("/api/admin/approve", { method: "POST", headers: adminAuth(), body: JSON.stringify({ id }) });
 export const reject = (id: string) => jsonFetch("/api/admin/reject", { method: "POST", headers: adminAuth(), body: JSON.stringify({ id }) });
