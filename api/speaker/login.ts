@@ -10,9 +10,10 @@ const handler = async (req: any, res: any) => {
   const rows = await query<{ id: string; password_hash: string }>(
     `select id, password_hash from speakers where invite_token = $1`, [token]
   );
-  if (rows.length === 0) return res.status(404).json({ error: "Invalid link" });
-  if (!(await verifyPassword(password, rows[0].password_hash))) {
-    return res.status(401).json({ error: "Incorrect password" });
+  // same status + message for unknown token and wrong password, so responses
+  // don't reveal whether an invite token exists
+  if (rows.length === 0 || !(await verifyPassword(password, rows[0]?.password_hash ?? ""))) {
+    return res.status(401).json({ error: "Invalid link or password" });
   }
   return res.status(200).json({ token: signToken({ sub: rows[0].id, role: "speaker" }) });
 }
