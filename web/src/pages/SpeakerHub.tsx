@@ -7,6 +7,7 @@ import { getPublicSpeakers } from '../lib/api'
 import { Navbar } from '../components/Navbar'
 import { Footer } from '../components/Footer'
 import { Hero } from '../components/Hero'
+import { SplitHero } from '../components/SplitHero'
 import { Marquee } from '../components/Marquee'
 import { SectionHeader } from '../components/SectionHeader'
 import { SearchFilterBar } from '../components/SearchFilterBar'
@@ -98,7 +99,7 @@ export function SpeakerHub({ portal }: SpeakerHubProps) {
     <div className="flex min-h-svh flex-col bg-white">
       <Navbar />
       <main className="flex-1">
-        <Hero portal={portal} />
+        {portal.key === 'past' ? <SplitHero portal={portal} /> : <Hero portal={portal} />}
 
         {/* Notable-names marquee — social proof */}
         <div className="border-b border-line bg-white">
